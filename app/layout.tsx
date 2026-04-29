@@ -1,5 +1,10 @@
 import "./globals.css";
 import Link from "next/link";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 export default function RootLayout({
   children,
@@ -7,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={cn("font-sans", geist.variable)}>
       <body>
         <nav className="bg-gray-800 text-white">
           <div className="max-w-4xl mx-auto flex items-center justify-between p-4">

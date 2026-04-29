@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { posts } from "@/lib/posts";
+import PostActions from "@/components/PostActions";
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const { id } = await Promise.resolve(params);
@@ -23,9 +23,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         <p className="text-sm text-gray-500 mb-6">{post.author} · {post.date}</p>
         <p className="mb-6">{post.content}</p>
       </article>
-      <Link href="/posts" className="inline-block mt-6 text-blue-500 hover:underline">
-        목록으로 돌아가기
-      </Link>
+
+      <PostActions id={post.id} />
     </div>
   );
 }
