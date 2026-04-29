@@ -48,24 +48,25 @@
 }
 
 :root {
-  --background: #fbfdff;
-  --foreground: #0f1724;
+  /* 회색 계열 디자인 토큰 (임시) */
+  --background: #f8fafc; /* very light gray */
+  --foreground: #0f1724; /* very dark gray for readability */
   --card: #ffffff;
   --card-foreground: #0f1724;
   --popover: #ffffff;
   --popover-foreground: #0f1724;
-  --primary: #3b82f6; /* 차분한 블루 */
+  --primary: #6b7280; /* gray-500 — 주요 강조 색상(회색 계열) */
   --primary-foreground: #ffffff;
-  --secondary: #eef2f7;
-  --secondary-foreground: #0f1724;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --accent: #e6eef9;
-  --accent-foreground: #0f1724;
+  --secondary: #f3f4f6; /* gray-100 */
+  --secondary-foreground: #111827;
+  --muted: #f9fafb; /* 거의 흰색 회색 */
+  --muted-foreground: #6b7280;
+  --accent: #efefef;
+  --accent-foreground: #111827;
   --destructive: #ef4444;
-  --border: #e6eef6;
-  --input: #f1f5f9;
-  --ring: rgba(59,130,246,0.12);
+  --border: #e6e9ee;
+  --input: #f3f4f6;
+  --ring: rgba(107,114,128,0.12);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -74,12 +75,12 @@
   --radius: 0.625rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0f1724;
-  --sidebar-primary: #3b82f6;
+  --sidebar-primary: #6b7280;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef2f7;
+  --sidebar-accent: #f3f4f6;
   --sidebar-accent-foreground: #0f1724;
-  --sidebar-border: #e6eef6;
-  --sidebar-ring: rgba(59,130,246,0.08);
+  --sidebar-border: #e6e9ee;
+  --sidebar-ring: rgba(107,114,128,0.08);
 }
 
 .dark {
