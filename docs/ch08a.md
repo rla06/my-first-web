@@ -120,19 +120,19 @@ CLI가 Supabase 계정에 접근하려면 Access Token이 필요하다.
 ① https://supabase.com/dashboard/account/tokens 접속
 ② Generate new token 클릭 → 이름 입력(예: my-first-web-cli) → expires in "never" 선택 후 생성
 ③ Successfully generated a new token! 아래에 sbp_... 형태의 토큰을 복사한다 (생성 시 한 번만 표시됨, 이후 다시 못 봄)
-[REDACTED]
 
 8.3.2 CLI 로그인 + 프로젝트 링크  CLI
 권장: VS Code 통합 터미널
 Terminal → New Terminal
-cd 불필요. 바로 npx supabase login
+cd 불필요. 바로 npx supabase log
 # 1) CLI 로그인 — 브라우저 창이 열린다. 위에서 받은 토큰을 붙여 넣는다
 npx supabase login
 
 # 로그인 후 y 입력 -> 설치 후 enter -> 브라우저가 열리고 숫자가 나타나면 복사해서 터미널에 입력한다(Enter your verification code:)
 
 # 2) REFERENCE ID 확인
-npx supabase orgs list
+npx supabase projects list 
+
 
   LINKED | ORG ID               | REFERENCE ID         | NAME         | REGION                     |
   --------|----------------------|----------------------|--------------|----------------------------|
@@ -148,7 +148,7 @@ npx supabase link --project-ref 프로젝트참조ID
 ​
 8.3.3 API 키 → .env.local  CLI
 # Supabase가 만들어 둔 API URL과 anon key를 한 번에 조회
-npx supabase projects api-keys --project-ref "프로젝트참조ID"
+npx supabase projects api-keys --project-ref 프로젝트참조ID
 ​
 예시: npx supabase projects api-keys --project-ref citgmhsbetcguolnotlt
 출력의 anon 키를 복사해 프로젝트 루트에 .env.local을 만든다:
@@ -204,9 +204,9 @@ npm install @supabase/supabase-js @supabase/ssr
 Copilot 프롬프트: 아래를 복사해서 요청한다.
 [버전 고정] Next.js 16.2.1, @supabase/ssr 0.5.2.
 [규칙] App Router만. 구버전 createClient from @supabase/supabase-js 직접 사용 금지.
+환경변수: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY."
 "Next.js App Router용 Supabase 브라우저 클라이언트 파일을 만들어줘.
 경로: lib/supabase/client.ts. @supabase/ssr의 createBrowserClient 사용.
-환경변수: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY."
 8.5.3 검증: 터미널에서 아래 명령 실행
 # 빌드 통과 확인 (타입·환경변수 누락을 잡아준다)
 npm run build
@@ -298,4 +298,3 @@ Vercel 환경변수 등록 + git push로 배포
 
 Ch8 Supabase 작업 중. 진행: (예: 마이그레이션까지 완료, Next.js 연결 차례)
 @supabase/ssr의 createBrowserClient 패턴으로 작업해줘.
-​
