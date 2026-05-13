@@ -1,7 +1,5 @@
 import SketchLayout from "@/components/SketchLayout";
-import dynamic from "next/dynamic";
-
-const EditPostForm = dynamic(() => import("@/components/EditPostForm"), { ssr: false });
+import EditPostForm from "@/components/EditPostForm";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const { id } = params;
