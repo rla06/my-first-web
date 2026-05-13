@@ -33,3 +33,16 @@
 - Do not use `next/router`; use `next/navigation` when navigation is needed.
 - Do not create `pages/` router files; this project uses the App Router.
 - Do not add `"use client"` unless interactivity or browser APIs are actually needed.
+
+## Version Policy
+
+- 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 실제 `package.json`이 더 최신일 수 있다. 교재는 위 버전을 기준으로 설명함.
+- 빌드 오류가 버전 차이에서 발생하면 `package.json` 기준으로 원인을 확인한다.
+
+**Ch9 Auth / Routing Rules**
+
+- 인증: 이메일/비밀번호(`signInWithPassword`) 사용
+- 소셜 로그인 없음
+- 보호 라우트: `middleware.ts` 사용
+- `service_role` 키는 클라이언트에 노출 금지

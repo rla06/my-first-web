@@ -34,3 +34,18 @@ Use these variables instead of hardcoded Tailwind colors so theme changes apply 
 - Do not create `pages/` router files; use `app/` routes.
 - Avoid hardcoded Tailwind colors (use CSS variables/design tokens).
 - Verify import paths for shadcn/ui components (`@/components/ui/...`) to avoid hallucinated paths.
+
+## Version Policy
+
+- 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 실제 `package.json`이 더 최신일 수 있다.
+- 수업 프롬프트와 설명은 교재 기준으로 통일한다.
+- 빌드 오류가 버전 차이에서 발생하면 `package.json` 기준으로 원인을 확인한다.
+
+**Ch9 Auth / Routing Rules**
+
+- 인증: 이메일/비밀번호 (`signInWithPassword`)만 사용 — 구버전 `auth.signIn()` 사용 금지
+- 소셜 로그인은 추가하지 않는다.
+- App Router만 사용한다. `next/router` 또는 `pages/` 라우터를 사용하지 마라.
+- 보호 라우트는 `middleware.ts`로 구현한다.
+- `service_role` 키는 클라이언트에 절대 넣지 않는다.

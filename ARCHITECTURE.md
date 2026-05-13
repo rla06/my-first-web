@@ -111,6 +111,19 @@ create table comments (
 - 컴포넌트 세부 계층(예: CardHeader, CardFooter) — TODO: 추가 예정
 - 상세 DB 필드(태그 테이블, 좋아요 테이블) — TODO: 추가 예정
 
+## Authentication & Routing (Ch9 기준)
+
+- 인증 방식: 이메일/비밀번호(`signInWithPassword`) 사용 — 소셜 로그인 미사용
+- 보호 라우트: `middleware.ts`를 사용해 서버에서 리디렉션/접근 제어 구현
+- 클라이언트에서는 `next/router`와 `pages/` 라우터를 사용하지 말고 App Router(`next/navigation`)만 사용
+- 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 이름을 유지
+- 보안: `service_role` 키는 서버 전용(비공개)으로 유지 — 클라이언트에 절대 노출 금지
+
+## Version Policy
+
+- 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 실제 `package.json`의 버전이 더 최신일 수 있으니 빌드 오류가 발생하면 `package.json`을 우선 확인하세요.
+
 ---
 
 작성 기준: Next.js App Router, Server Components 우선. 클라이언트 상호작용이 필요한 부분에만 `"use client"`를 사용하세요.

@@ -17,6 +17,9 @@
 
 - Supabase 초기 마이그레이션 스크립트: `db/001_init.sql`
 - 클라이언트 인증 컴포넌트: `components/AuthForm.tsx` (OTP 이메일 방식)
+ - 클라이언트 인증 컴포넌트: `components/AuthForm.tsx` (현재: OTP 이메일 방식)
+	- 교재 기준: 이메일/비밀번호 로그인만 사용 (`signInWithPassword`)
+	- 변경 권장: `components/AuthForm.tsx`가 OTP 방식이면 Ch9 기준(이메일/비밀번호)으로 수정 필요
 - 로그인 페이지: `app/login/page.tsx`
 - 포스트 편집 템플릿: `app/posts/[id]/edit/page.tsx` (플레이스홀더)
 
@@ -53,3 +56,8 @@
 - Tailwind CSS 4 기준에서는 `@import "tailwindcss"` + `@theme` 블록으로 설정 (`tailwind.config.js` 불필요)
 - Server Component에서 useRouter 사용 불가 → redirect() 사용
 - Supabase 연동 준비: 로컬 환경에 `.env.local` 또는 배포 환경의 환경변수로 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` 설정 필요
+
+## Version Policy
+
+- 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 수업 설명은 교재 기준을 따르되, 빌드/실행 문제는 실제 `package.json` 버전을 우선 확인하세요.
