@@ -1,35 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { NextFetchEvent } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-// 보호할 경로는 matcher로도 지정
 export const config = {
-  // 보호할 경로들: 현재 프로젝트에 존재하는 `/posts/new`만 매칭합니다.
-  matcher: ["/posts/new"],
+  matcher: ["/posts/new", "/mypage/:path*"],
 };
 
-export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-  const res = NextResponse.next();
+export async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
-  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    // 환경변수 누락 시 기본 동작(차단하지 않음)
-    return res;
+  if (!supabaseUrl || !supabaseKey) {
+    return supabaseResponse;
   }
 
-  // Simple cookie-based check for Supabase session tokens in middleware environment.
-  // @supabase/ssr createServerClient signature varies by version and may not work here,
-  // so we conservatively check cookies that Supabase sets for client sessions.
-  const accessToken = req.cookies.get("sb-access-token")?.value;
-  const refreshToken = req.cookies.get("sb-refresh-token")?.value;
-  const supabaseAuth = req.cookies.get("supabase-auth-token")?.value;
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
 
-  if (!accessToken && !refreshToken && !supabaseAuth) {
-    const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("redirect", req.nextUrl.pathname + req.nextUrl.search);
-    return NextResponse.redirect(loginUrl);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 비로그인 사용자가 보호 라우트에 접근할 경우 로그인 페이지로 리다이렉트
+  if (
+    !user &&
+    (request.nextUrl.pathname.startsWith("/posts/new") ||
+      request.nextUrl.pathname.startsWith("/mypage"))
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
-  return res;
+  return supabaseResponse;
 }
