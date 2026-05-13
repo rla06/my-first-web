@@ -42,7 +42,10 @@
 
 **Ch9 Auth / Routing Rules**
 
-- 인증: 이메일/비밀번호(`signInWithPassword`) 사용
-- 소셜 로그인 없음
+- 인증: 이메일/비밀번호(`signInWithPassword`)만 사용 (구버전 `auth.signIn()` 금지)
+- 소셜 로그인 추가 금지
+- Next.js App Router만 사용 (`next/router` 금지)
+- 패키지 버전은 반드시 Ch7·Ch8 교재 기준을 따른다.
+- Supabase 대시보드 메뉴 안내만 2026년 5월 기준이다.
 - 보호 라우트: `middleware.ts` 사용
-- `service_role` 키는 클라이언트에 노출 금지
+- `service_role` 키는 클라이언트에 절대 노출 금지
