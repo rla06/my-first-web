@@ -1,7 +1,5 @@
-import dynamic from "next/dynamic";
 import SketchLayout from "@/components/SketchLayout";
-
-const LoginForm = dynamic(() => import("@/components/LoginForm"), { ssr: false });
+import LoginForm from "@/components/LoginForm";
 
 export default function LoginPage() {
   return (
