@@ -16,12 +16,18 @@
 ## 새로 추가된 항목
 
 - Supabase 초기 마이그레이션 스크립트: `db/001_init.sql`
-- 클라이언트 인증 컴포넌트: `components/AuthForm.tsx` (OTP 이메일 방식)
- - 클라이언트 인증 컴포넌트: `components/AuthForm.tsx` (현재: OTP 이메일 방식)
-	- 교재 기준: 이메일/비밀번호 로그인만 사용 (`signInWithPassword`)
-	- 변경 권장: `components/AuthForm.tsx`가 OTP 방식이면 Ch9 기준(이메일/비밀번호)으로 수정 필요
+- 클라이언트 인증 컴포넌트: `components/AuthForm.tsx` (현재: OTP 이메일 방식이었으나 Ch9 기준에 의해 이메일/비밀번호 로그인으로 통일)
 - 로그인 페이지: `app/login/page.tsx`
+- 회원가입 페이지: `app/signup/page.tsx`
+- 인증 관리: `lib/auth.ts` (signInWithPassword, signUpWithEmail 등) 및 `contexts/AuthContext.tsx`
+- 보호 라우트: `middleware.ts` 추가 (현재 보호 경로: `/posts/new`)
 - 포스트 편집 템플릿: `app/posts/[id]/edit/page.tsx` (플레이스홀더)
+
+## Ch9 관련 상태 요약
+- 인증: Supabase Auth 이메일/비밀번호
+- 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Ch8 Supabase CLI 연결 확인: `projects list`, `projects api-keys` 점검 완료
+- Supabase 대시보드: Authentication -> Sign In / Providers -> Email, URL Configuration 확인 완료
 
 ## 해결된 이슈
 

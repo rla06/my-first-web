@@ -113,8 +113,10 @@ create table comments (
 
 ## Authentication & Routing (Ch9 기준)
 
+- 인증 흐름: signup(회원가입) -> login(로그인) -> posts(글 목록)
+- Header 상태 분기: 비로그인 시(로그인/회원가입 버튼), 로그인 시(새 글 쓰기/로그아웃 버튼)
 - 인증 방식: 이메일/비밀번호(`signInWithPassword`) 사용 — 소셜 로그인 미사용
-- 보호 라우트: `middleware.ts`를 사용해 서버에서 리디렉션/접근 제어 구현
+- 보호 라우트: `/posts/new` (현재 `middleware.ts`를 사용해 비로그인 접근 차단)
 - 클라이언트에서는 `next/router`와 `pages/` 라우터를 사용하지 말고 App Router(`next/navigation`)만 사용
 - 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 이름을 유지
 - 보안: `service_role` 키는 서버 전용(비공개)으로 유지 — 클라이언트에 절대 노출 금지
