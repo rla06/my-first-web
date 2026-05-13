@@ -1,16 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import supabase from "./supabase/client";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-
-export default supabaseClient;
-import { createClient } from "@supabase/supabase-js";
-
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-export const supabaseClient = createClient(url, anonKey);
-
+// Re-export the browser/server-aware supabase client from lib/supabase/client.ts
+export const supabaseClient = supabase;
 export default supabaseClient;
