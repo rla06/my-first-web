@@ -29,6 +29,13 @@
 - Ch8 Supabase CLI 연결 확인: `projects list`, `projects api-keys` 점검 완료
 - Supabase 대시보드: Authentication -> Sign In / Providers -> Email, URL Configuration 확인 완료
 
+## Ch9 Supabase Auth 작업 요약
+- 인증: Supabase Auth 이메일/비밀번호 (`signInWithPassword`, `signUp`, `signOut` 사용)
+- 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (클라이언트), `SUPABASE_SERVICE_ROLE_KEY`(서버 전용)
+- Ch8 CLI 연결 확인: `npx supabase projects list`, `npx supabase projects api-keys` 권장
+- 생성/수정 파일: `lib/auth.ts`, `app/login/page.tsx`, `app/signup/page.tsx`, `contexts/AuthContext.tsx` (AuthProvider), `app/layout.tsx` 연결, `components/Header.tsx`, `middleware.ts`
+- 보호 라우트: `/posts/new` (middleware.ts에서 처리)
+
 ## 해결된 이슈
 
 - shadcn/ui Button variant가 디자인 토큰과 불일치 → globals.css의 --primary 수정으로 해결

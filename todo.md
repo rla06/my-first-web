@@ -22,6 +22,15 @@
 - [x] /posts/new 보호
 - [x] npm run build 검증
 - [x] Vercel 배포 URL 검증
+## Ch9 과제 TODO
+
+- 회원가입 구현
+- 로그인 구현
+- 로그아웃 구현
+- Header 로그인 상태 분기
+- /posts/new 보호
+- npm run build 검증
+- Vercel 배포 URL 검증
 
 ## 3단계: 고급 기능 (Ch11~12)
 
