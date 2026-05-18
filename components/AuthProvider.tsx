@@ -26,11 +26,19 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const s = supabaseClient.auth.getSession().then(({ data }) => {
       setSession(data.session ?? null);
       setUser(data.session?.user ?? null);
+      const uid = data.session?.user?.id;
+      if (uid) {
+        supabaseClient.from("profiles").upsert({ id: uid, username: data.session?.user?.email ?? undefined }).select().catch(() => {});
+      }
     });
 
     const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession ?? null);
       setUser(newSession?.user ?? null);
+      const uid = newSession?.user?.id;
+      if (uid) {
+        supabaseClient.from("profiles").upsert({ id: uid, username: newSession?.user?.email ?? undefined }).select().catch(() => {});
+      }
     });
 
     return () => {

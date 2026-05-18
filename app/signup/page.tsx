@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/auth";
+import supabase from "@/lib/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -27,6 +28,17 @@ export default function SignupPage() {
         setError(err.message || String(err));
         setLoading(false);
         return;
+      }
+
+      // Try to create a profile row for the new user (if user id is available).
+      // This helps avoid foreign-key conflicts when inserting posts later.
+      try {
+        const userId = res?.data?.user?.id;
+        if (userId) {
+          await supabase.from("profiles").upsert({ id: userId, username: name }).select();
+        }
+      } catch (e) {
+        // ignore — profile creation is best-effort here
       }
 
       // 성공 처리: 가입 완료 메시지 표시 후 로그인 페이지로 이동
