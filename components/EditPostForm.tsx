@@ -70,15 +70,27 @@ export default function EditPostForm({ id }: { id: string }) {
     }
     setSaving(true);
     try {
-      const { data, error } = await supabase
-        .from("posts")
-        .update({ title: title.trim(), content: content.trim(), updated_at: new Date() })
-        .eq("id", id)
-        .select("id")
-        .single();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = (sessionData as any)?.session;
+      const token = session?.access_token;
+      if (!token) {
+        setError("세션이 유효하지 않습니다. 다시 로그인해 주세요.");
+        setSaving(false);
+        return;
+      }
 
-      if (error || !data) {
-        setError(error?.message ?? "저장에 실패했습니다.");
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: title.trim(), content: content.trim() }),
+      });
+
+      const result = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(result?.error ?? "저장에 실패했습니다.");
         setSaving(false);
         return;
       }

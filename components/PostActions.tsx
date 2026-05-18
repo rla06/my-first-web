@@ -28,9 +28,22 @@ export default function PostActions({ id }: { id: string }) {
     if (deleting) return;
     setDeleting(true);
     try {
-      const { error } = await supabase.from("posts").delete().eq("id", id);
-      if (error) {
-        setErrorMsg(error.message || "삭제에 실패했습니다.");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = (sessionData as any)?.session;
+      const token = session?.access_token;
+      if (!token) {
+        setErrorMsg("세션이 유효하지 않습니다. 다시 로그인해 주세요.");
+        setDeleting(false);
+        return;
+      }
+
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        setErrorMsg(body?.error ?? "삭제에 실패했습니다.");
         setDeleting(false);
         return;
       }
