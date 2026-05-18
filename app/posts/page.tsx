@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import SketchLayout from "@/components/SketchLayout";
 
 export default async function PostsPage() {
-  let data = null;
-  let error = null;
+  let data: any[] | null = null;
+  let error: any = null;
 
   try {
     const res = await supabase
@@ -38,13 +38,13 @@ export default async function PostsPage() {
           </Link>
         </div>
 
-        {error && <div className="text-sm text-destructive">목록을 불러오는 중 오류가 발생했습니다.</div>}
+        {Boolean(error) && <div className="text-sm text-destructive">목록을 불러오는 중 오류가 발생했습니다. {String(error)}</div>}
 
-        {!error && data && data.length === 0 && <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>}
+        {!Boolean(error) && data && data.length === 0 && <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>}
 
-        {!error && !data && <div className="text-sm text-muted-foreground">로딩...</div>}
+        {!Boolean(error) && !data && <div className="text-sm text-muted-foreground">로딩...</div>}
 
-        {!error && data && (
+        {!Boolean(error) && data && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.map((post: any) => (
               <Card key={post.id} className="hover:shadow-lg transition">
