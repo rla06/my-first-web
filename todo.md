@@ -22,6 +22,16 @@
 - [x] /posts/new 보호
 - [x] npm run build 검증
 - [x] Vercel 배포 URL 검증
+ 
+## Ch10 준비 TODO (우선순위)
+
+- [ ] `lib/supabase/client.ts` 존재 및 사용처 확인
+- [ ] `contexts/AuthContext.tsx` / `useAuth`가 프로젝트에 통합되어 있는지 검증
+- [ ] `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 추가 (비공개 키는 서버 전용)
+- [ ] posts CRUD 구현: API 엔드포인트(`app/api/posts/route.ts`) 및 프론트엔드 폼(`components/NewPostForm.tsx`, `app/posts/[id]/edit`) 확인
+- [ ] posts 스키마 컬럼 검증 및 문서 반영(Ch8 기준)
+- [ ] RLS 정책(Ch11) 적용 전, 수정/삭제 UI는 프론트엔드로만 노출
+
 ## Ch9 과제 TODO
 
 - 회원가입 구현

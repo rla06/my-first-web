@@ -74,3 +74,17 @@
 
 - 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
 - 수업 설명은 교재 기준을 따르되, 빌드/실행 문제는 실제 `package.json` 버전을 우선 확인하세요.
+
+## Ch10 시작 전 Readiness 체크리스트
+
+- `lib/supabase/client.ts` 또는 `lib/supabase.ts`가 실제로 존재하고, 프로젝트 내에서 임포트 되는지 확인
+- 인증은 `contexts/AuthContext.tsx` (또는 `components/AuthProvider.tsx`)의 `useAuth` 훅을 통해 사용되고 있는지 확인
+- `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL` 및 `NEXT_PUBLIC_SUPABASE_ANON_KEY`가 설정되어 있는지 확인
+- posts 컬럼명이 Ch8 스키마와 일치하는지 확인: `id`, `author_id`, `title`, `slug`, `content`, `published`, `published_at`, `created_at`, `updated_at`
+- App Router만 사용하고 `next/router` 또는 `pages/` 라우터가 없는지 확인
+- 수정·삭제 UI는 프론트엔드 UX로 남겨두고, 실제 권한 처리는 Ch11 RLS에서 설정할 계획임을 문서화
+- `package.json`의 실제 버전과 교재 기준 버전을 비교하여 문서에 병기할 것
+
+## 현재 설치된 주요 패키지 버전(확인 필요)
+- 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 현재 설치(프로젝트 `package.json` 기준): Next.js 16.2.1, @supabase/supabase-js 2.105.1, @supabase/ssr 0.10.2

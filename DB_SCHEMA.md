@@ -8,10 +8,9 @@
 ```sql
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  username text unique,
-  display_name text,
+  username text,
   avatar_url text,
-  bio text,
+  role text,
   created_at timestamptz default now()
 );
 ```
@@ -22,18 +21,13 @@ create table if not exists profiles (
 ```sql
 create table if not exists posts (
   id uuid primary key default gen_random_uuid(),
-  author_id uuid references profiles(id) on delete set null,
+  user_id uuid references profiles(id) on delete cascade not null,
   title text not null,
-  slug text unique not null,
   content text not null,
-  published boolean default false,
-  published_at timestamptz,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  created_at timestamptz default now()
 );
 
-create index if not exists idx_posts_author on posts(author_id);
-create index if not exists idx_posts_published on posts(published);
+create index if not exists idx_posts_user on posts(user_id);
 ```
 
 ## 테이블: comments

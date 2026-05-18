@@ -126,6 +126,21 @@ create table comments (
 - 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
 - 실제 `package.json`의 버전이 더 최신일 수 있으니 빌드 오류가 발생하면 `package.json`을 우선 확인하세요.
 
+## Ch10 시작 전 규칙 요약
+
+- Supabase 클라이언트는 `lib/supabase/client.ts`를 사용하도록 권장합니다. 서버 전용 작업이 필요한 경우 `lib/supabase/server.ts`(서비스 역할 키 사용)처럼 분리하세요.
+- 인증 흐름은 Ch9의 `useAuth` 훅과 `AuthProvider`를 활용합니다. `contexts/AuthContext.tsx`가 프로젝트에 존재해야 합니다.
+- posts 컬럼명은 Ch8 스키마를 그대로 사용합니다: `id`, `author_id`, `title`, `slug`, `content`, `published`, `published_at`, `created_at`, `updated_at`.
+- 수정/삭제 UI는 프론트엔드 UX로 남겨두고 실제 권한 관리는 Ch11에서 RLS로 처리합니다.
+- App Router만 사용하고 `next/router`/`pages/` 사용을 금지합니다.
+
+## 실제 설치 버전(프로젝트 기준)
+- `package.json`에 기록된 현재 주요 패키지 버전(예시):
+  - Next.js: 16.2.1
+  - @supabase/supabase-js: 2.105.1
+  - @supabase/ssr: 0.10.2
+
+
 ---
 
 작성 기준: Next.js App Router, Server Components 우선. 클라이언트 상호작용이 필요한 부분에만 `"use client"`를 사용하세요.

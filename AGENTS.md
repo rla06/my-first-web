@@ -40,6 +40,13 @@
 - 실제 `package.json`이 더 최신일 수 있다. 교재는 위 버전을 기준으로 설명함.
 - 빌드 오류가 버전 차이에서 발생하면 `package.json` 기준으로 원인을 확인한다.
 
+## Ch10 관련 에이전트 지침
+
+- 문서/코드 변경 시 `lib/supabase/client.ts` 사용 여부와 `contexts/AuthContext.tsx` 연동을 우선 확인하세요.
+- `.github/copilot-instructions.md`가 존재하므로 에이전트는 우선 해당 파일을 준수하세요.
+- 실제 `package.json` 버전(예: @supabase/supabase-js 2.105.1 등)을 문서에 병기하여 교재 기준과 차이를 명확히 기록합니다.
+
+
 **Ch9 Auth / Routing Rules**
 
 - 인증: 이메일/비밀번호(`signInWithPassword`)만 사용 (구버전 `auth.signIn()` 금지)
