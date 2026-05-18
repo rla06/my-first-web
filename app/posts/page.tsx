@@ -1,5 +1,5 @@
 import Link from "next/link";
-import supabase from "@/lib/supabase";
+import supabaseAdmin from "@/lib/supabaseServer";
 import {
   Card,
   CardHeader,
@@ -16,7 +16,7 @@ export default async function PostsPage() {
   let error: any = null;
 
   try {
-    const res = await supabase
+    const res = await supabaseAdmin
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .order("created_at", { ascending: false });

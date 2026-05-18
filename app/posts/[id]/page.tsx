@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import SketchLayout from "@/components/SketchLayout";
-import supabase from "@/lib/supabase";
+import supabaseAdmin from "@/lib/supabaseServer";
 import Link from "next/link";
 import PostOwnerActions from "@/components/PostOwnerActions";
 
@@ -12,7 +12,7 @@ export default async function PostPage({ params }: Props) {
 
   // Load the post from Supabase by id
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .eq("id", id)
