@@ -1,13 +1,13 @@
 import SketchLayout from "@/components/SketchLayout";
-import NewPostForm from "@/components/NewPostForm";
+import LoginForm from "@/components/LoginForm";
 
-export default function NewPostPage() {
+export default function LoginPage() {
   return (
     <SketchLayout>
       <div>
-        <h1 className="text-2xl font-semibold mb-4">새 글 작성</h1>
+        <h1 className="text-2xl font-semibold mb-4">로그인</h1>
         <div className="p-4 border rounded-md bg-card">
-          <NewPostForm />
+          <LoginForm />
         </div>
       </div>
     </SketchLayout>

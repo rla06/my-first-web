@@ -1,23 +1,74 @@
 import Link from "next/link";
-import { posts } from "@/lib/posts";
+import supabase from "@/lib/supabase";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardAction,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import SketchLayout from "@/components/SketchLayout";
 
-export default function PostsPage() {
+export default async function PostsPage() {
+  let data: any[] | null = null;
+  let error: any = null;
+
+  try {
+    const res = await supabase
+      .from("posts")
+      .select("id, title, content, created_at, user_id")
+      .order("created_at", { ascending: false });
+    data = res.data;
+    error = res.error;
+  } catch (e) {
+    error = e;
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">블로그</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {posts.map((post) => (
-          <Link
-            key={post.id}
-            href={`/posts/${post.id}`}
-            className="block p-4 border rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="font-bold text-lg mb-2">{post.title}</h2>
-            <p className="text-sm text-gray-500">{post.author} · {post.date}</p>
+    <SketchLayout>
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">블로그</h1>
+          <Link href="/posts/new" className="">
+            <Button asChild>
+              <a>새 글 작성</a>
+            </Button>
           </Link>
-        ))}
+        </div>
+
+        {Boolean(error) && <div className="text-sm text-destructive">목록을 불러오는 중 오류가 발생했습니다. {String(error)}</div>}
+
+        {!Boolean(error) && data && data.length === 0 && <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>}
+
+        {!Boolean(error) && !data && <div className="text-sm text-muted-foreground">로딩...</div>}
+
+        {!Boolean(error) && data && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.map((post: any) => (
+              <Card key={post.id} className="hover:shadow-lg transition">
+                <CardHeader>
+                  <CardTitle>{post.title}</CardTitle>
+                  <CardDescription>{post.user_id} · {post.created_at}</CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{(post.content || "").slice(0, 120)}{(post.content || "").length>120?"...":""}</p>
+                </CardContent>
+
+                <CardAction>
+                  <Link href={`/posts/${post.id}`}>
+                    <Button size="sm" asChild>
+                      <a>보기</a>
+                    </Button>
+                  </Link>
+                </CardAction>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </SketchLayout>
   );
 }

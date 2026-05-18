@@ -1,31 +1,42 @@
+import { notFound } from "next/navigation";
+import SketchLayout from "@/components/SketchLayout";
+import supabase from "@/lib/supabase";
 import Link from "next/link";
-import { posts } from "@/lib/posts";
+import PostOwnerActions from "@/components/PostOwnerActions";
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const { id } = await Promise.resolve(params);
-  const post = posts.find((p) => p.id === Number(id));
+type Props = { params: { id: string } };
 
-  if (!post) {
+export default async function PostPage({ params }: Props) {
+  const { id } = params;
+  if (!id) return notFound();
+
+  // Load the post from Supabase by id
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, title, content, created_at, user_id")
+      .eq("id", id)
+      .single();
+
+    if (error || !data) return notFound();
+
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">게시글을 찾을 수 없습니다</h1>
-        <Link href="/posts" className="text-blue-500 hover:underline">
-          목록으로 돌아가기
-        </Link>
+        <article className="prose lg:prose-lg">
+          <h1 className="text-3xl font-bold mb-2">{data.title}</h1>
+          <p className="text-sm text-gray-500 mb-6">{data.user_id} · {new Date(data.created_at).toLocaleString()}</p>
+          <div className="mb-6" dangerouslySetInnerHTML={{ __html: data.content }} />
+        </article>
+
+        {/* UI: only show owner actions for the post's author. Actual authorization is enforced by RLS (Ch11). */}
+        <PostOwnerActions authorId={data.user_id} postId={data.id} />
+
+        <div className="mt-4">
+          <Link href="/posts">목록으로 돌아가기</Link>
+        </div>
       </div>
     );
+  } catch (e) {
+    return notFound();
   }
-
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      <article className="prose lg:prose-lg">
-        <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-        <p className="text-sm text-gray-500 mb-6">{post.author} · {post.date}</p>
-        <p className="mb-6">{post.content}</p>
-      </article>
-      <Link href="/posts" className="inline-block mt-6 text-blue-500 hover:underline">
-        목록으로 돌아가기
-      </Link>
-    </div>
-  );
 }
