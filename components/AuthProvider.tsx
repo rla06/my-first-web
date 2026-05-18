@@ -28,7 +28,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       setUser(data.session?.user ?? null);
       const uid = data.session?.user?.id;
       if (uid) {
-        supabaseClient.from("profiles").upsert({ id: uid, username: data.session?.user?.email ?? undefined }).select().catch(() => {});
+        void (async () => {
+          try {
+            await supabaseClient.from("profiles").upsert({ id: uid, username: data.session?.user?.email ?? undefined }).select();
+          } catch (e) {
+            // ignore
+          }
+        })();
       }
     });
 
@@ -37,7 +43,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       setUser(newSession?.user ?? null);
       const uid = newSession?.user?.id;
       if (uid) {
-        supabaseClient.from("profiles").upsert({ id: uid, username: newSession?.user?.email ?? undefined }).select().catch(() => {});
+        void (async () => {
+          try {
+            await supabaseClient.from("profiles").upsert({ id: uid, username: newSession?.user?.email ?? undefined }).select();
+          } catch (e) {
+            // ignore
+          }
+        })();
       }
     });
 

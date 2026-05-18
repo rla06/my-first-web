@@ -35,7 +35,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       // Ensure a profile row exists for the authenticated user
       const uid = data.user?.id;
       if (uid) {
-        supabase.from("profiles").upsert({ id: uid, username: data.user?.email ?? undefined }).select().catch(() => {});
+        void (async () => {
+          try {
+            await supabase.from("profiles").upsert({ id: uid, username: data.user?.email ?? undefined }).select();
+          } catch (e) {
+            // ignore
+          }
+        })();
       }
       setLoading(false);
     }).catch(() => {
@@ -49,7 +55,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       setUser(session?.user ?? null);
       const uid = session?.user?.id;
       if (uid) {
-        supabase.from("profiles").upsert({ id: uid, username: session?.user?.email ?? undefined }).select().catch(() => {});
+        void (async () => {
+          try {
+            await supabase.from("profiles").upsert({ id: uid, username: session?.user?.email ?? undefined }).select();
+          } catch (e) {
+            // ignore
+          }
+        })();
       }
     });
 
