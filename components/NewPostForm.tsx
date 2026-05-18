@@ -35,6 +35,14 @@ export default function NewPostForm() {
 
     setSaving(true);
     try {
+      // Ensure there's a valid session/token before attempting insert.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = (sessionData as any)?.session;
+      if (!session) {
+        setError("세션이 유효하지 않습니다. 다시 로그인해 주세요.");
+        setSaving(false);
+        return;
+      }
       const { data, error: supaError } = await supabase
         .from("posts")
         .insert([{ title: title.trim(), content: content.trim(), user_id: user.id }])
@@ -47,8 +55,17 @@ export default function NewPostForm() {
         return;
       }
 
+      // data 형태가 객체 또는 배열일 수 있으므로 안전하게 id를 추출
+      const newId = (data as any)?.id ?? (Array.isArray(data) ? (data as any)[0]?.id : undefined);
+      if (!newId) {
+        setError("생성된 글의 ID를 확인할 수 없습니다.");
+        setSaving(false);
+        return;
+      }
+
       // 성공하면 새 글 상세로 이동
-      router.push(`/posts/${data.id}`);
+      console.log("New post id:", newId, "insert response:", data);
+      router.push(`/posts/${newId}`);
     } catch (err: any) {
       setError(err?.message ?? "게시 중 오류가 발생했습니다.");
       setSaving(false);
