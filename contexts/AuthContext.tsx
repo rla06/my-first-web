@@ -32,6 +32,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     supabase.auth.getUser().then(({ data }) => {
       if (!mounted) return;
       setUser(data.user ?? null);
+      // Ensure a profile row exists for the authenticated user
+      const uid = data.user?.id;
+      if (uid) {
+        supabase.from("profiles").upsert({ id: uid, username: data.user?.email ?? undefined }).select().catch(() => {});
+      }
       setLoading(false);
     }).catch(() => {
       if (!mounted) return;
@@ -42,6 +47,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // 로그인/로그아웃 상태 변화 리스너
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      const uid = session?.user?.id;
+      if (uid) {
+        supabase.from("profiles").upsert({ id: uid, username: session?.user?.email ?? undefined }).select().catch(() => {});
+      }
     });
 
     return () => {
