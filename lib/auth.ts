@@ -1,17 +1,19 @@
 import supabase from "./supabase/client";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+
 export async function signInWithEmail(email: string, password: string) {
-  // Uses supabase.auth.signInWithPassword (v2 API)
   return await supabase.auth.signInWithPassword({ email, password });
 }
 
 export async function signUpWithEmail(email: string, password: string, name?: string) {
-  // Uses supabase.auth.signUp (v2 API) with user metadata for name
+  // If NEXT_PUBLIC_SITE_URL is set, include it so confirmation emails redirect to production
   return await supabase.auth.signUp({
     email,
     password,
     options: {
       data: name ? { name } : undefined,
+      emailRedirectTo: SITE_URL ? `${SITE_URL}/login` : undefined,
     },
   });
 }
