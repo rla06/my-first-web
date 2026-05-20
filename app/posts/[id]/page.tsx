@@ -36,7 +36,7 @@ export default async function PostPage({ params }: Props) {
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       return (
