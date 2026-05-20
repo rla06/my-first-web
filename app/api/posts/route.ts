@@ -1,5 +1,15 @@
 import { NextResponse, NextRequest } from "next/server";
-import supabaseAdmin from "@/lib/supabaseServer";
+import { createClient } from "@supabase/supabase-js";
+
+function createServerClient(token?: string) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+
+  return createClient(url, anonKey, {
+    global: token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,29 +25,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Require server-side service role flow for safe writes.
-    // This prevents unreliable client-side REST forwarding which can cause 403s
-    // when tokens/headers are missing or RLS blocks the request.
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return NextResponse.json({ error: 'Server misconfiguration: SUPABASE_SERVICE_ROLE_KEY is required for write operations' }, { status: 500 });
+    const supabase = createServerClient(token);
+    if (!supabase) {
+      return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
     }
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token as string);
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token as string);
     if (userErr || !userData?.user) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
     const userId = userData.user.id;
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("posts")
       .insert([{ title: body.title, content: body.content, user_id: userId }])
       .select()
       .single();
 
     if (error) {
-      // Detect common RLS error and provide actionable hint
-      const msg = (error?.message || '').toString();
-      if (msg.includes('row-level security') || msg.includes('row level security')) {
-        return NextResponse.json({ error: 'Row-level security blocked the insert. This usually means the server is using the anon key instead of the SUPABASE_SERVICE_ROLE_KEY. Verify your server environment variable SUPABASE_SERVICE_ROLE_KEY is set to the service role key (not a NEXT_PUBLIC_ key) and redeploy.' }, { status: 500 });
+      const msg = (error?.message || "").toString();
+      if (msg.includes("row-level security") || msg.includes("row level security")) {
+        return NextResponse.json({ error: "Row-level security blocked the insert. Ensure the user is logged in and that the RLS policy allows inserts when user_id equals auth.uid()." }, { status: 403 });
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

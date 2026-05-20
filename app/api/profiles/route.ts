@@ -1,5 +1,15 @@
 import { NextResponse, NextRequest } from "next/server";
-import supabaseAdmin from "@/lib/supabaseServer";
+import { createClient } from "@supabase/supabase-js";
+
+function createServerClient(token?: string) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+
+  return createClient(url, anonKey, {
+    global: token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,18 +20,17 @@ export async function POST(req: NextRequest) {
     const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return NextResponse.json({ error: 'Server misconfiguration: SUPABASE_SERVICE_ROLE_KEY is required' }, { status: 500 });
-    }
+    const supabase = createServerClient(token);
+    if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
 
-    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token as string);
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token as string);
     if (userErr || !userData?.user) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
     const userId = userData.user.id;
     // Ensure the provided id matches authenticated user
     if (userId !== body.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("profiles")
       .upsert({ id: body.id, username: body.username ?? null }, { onConflict: "id" })
       .select()
