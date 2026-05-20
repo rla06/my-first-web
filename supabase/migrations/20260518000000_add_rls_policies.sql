@@ -11,13 +11,13 @@ CREATE POLICY "Public select" ON public.posts
 -- Allow authenticated users to insert rows where new.user_id equals auth.uid()
 CREATE POLICY "Insert own posts" ON public.posts
   FOR INSERT
-  WITH CHECK (auth.uid() = new.user_id);
+  WITH CHECK (auth.uid() = user_id);
 
 -- Allow owners to update their posts
 CREATE POLICY "Update own posts" ON public.posts
   FOR UPDATE
   USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = new.user_id);
+  WITH CHECK (auth.uid() = user_id);
 
 -- Allow owners to delete their posts
 CREATE POLICY "Delete own posts" ON public.posts

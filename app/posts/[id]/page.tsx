@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import SketchLayout from "@/components/SketchLayout";
-import supabaseAdmin from "@/lib/supabaseServer";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import PostOwnerActions from "@/components/PostOwnerActions";
 
@@ -10,15 +11,41 @@ export default async function PostPage({ params }: Props) {
   const { id } = params;
   if (!id) return notFound();
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = url && anonKey
+    ? createServerClient(url, anonKey, {
+        cookies: {
+          getAll: () => cookies().getAll(),
+          setAll: () => {},
+        },
+      })
+    : null;
+
   // Load the post from Supabase by id
   try {
-    const { data, error } = await supabaseAdmin
+    if (!supabase) {
+      return (
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="text-sm text-destructive">Supabase 환경변수가 설정되지 않았습니다.</div>
+        </div>
+      );
+    }
+    const { data, error } = await supabase
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .eq("id", id)
       .single();
 
-    if (error || !data) return notFound();
+    if (error) {
+      return (
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="text-sm text-destructive">게시글을 불러오는 중 오류가 발생했습니다: {error.message}</div>
+        </div>
+      );
+    }
+
+    if (!data) return notFound();
 
     return (
       <div className="max-w-4xl mx-auto p-6">

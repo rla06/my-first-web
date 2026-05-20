@@ -1,5 +1,6 @@
 import Link from "next/link";
-import supabaseAdmin from "@/lib/supabaseServer";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import {
   Card,
   CardHeader,
@@ -15,8 +16,20 @@ export default async function PostsPage() {
   let data: any[] | null = null;
   let error: any = null;
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = url && anonKey
+    ? createServerClient(url, anonKey, {
+        cookies: {
+          getAll: () => cookies().getAll(),
+          setAll: () => {},
+        },
+      })
+    : null;
+
   try {
-    const res = await supabaseAdmin
+    if (!supabase) throw new Error("Supabase not configured");
+    const res = await supabase
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .order("created_at", { ascending: false });

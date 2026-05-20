@@ -35,41 +35,23 @@ export default function NewPostForm() {
 
     setSaving(true);
     try {
-      // Ensure there's a valid session/token before attempting insert.
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = (sessionData as any)?.session;
-      const token = session?.access_token;
-      if (!token) {
-        setError("세션이 유효하지 않습니다. 다시 로그인해 주세요.");
-        setSaving(false);
-        return;
+      // 1. Supabase client insert with RLS (requires user_id)
+      const { data, error: insertError } = await supabase
+        .from("posts")
+        .insert([{ title: title.trim(), content: content.trim(), user_id: user.id }])
+        .select()
+        .single();
+
+      if (insertError) {
+        throw new Error(insertError.message);
       }
 
-      // Call server-side API that uses service role key. Send user's access token for verification.
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title: title.trim(), content: content.trim() }),
-      });
-
-      const created = await res.json();
-      if (!res.ok) {
-        setError(created?.error ?? "저장에 실패했습니다.");
-        setSaving(false);
-        return;
+      if (!data?.id) {
+        throw new Error("생성된 글의 ID를 확인할 수 없습니다.");
       }
 
-      const newId = created?.id;
-      if (!newId) {
-        setError("생성된 글의 ID를 확인할 수 없습니다.");
-        setSaving(false);
-        return;
-      }
-
-      router.push(`/posts/${newId}`);
+      // 성공하면 새 글 상세로 이동
+      router.push(`/posts/${data.id}`);
     } catch (err: any) {
       setError(err?.message ?? "게시 중 오류가 발생했습니다.");
       setSaving(false);
