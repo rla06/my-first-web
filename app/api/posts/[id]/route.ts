@@ -11,9 +11,13 @@ function createServerClient(token?: string) {
   });
 }
 
+async function getPostId(context: any) {
+  const params = await Promise.resolve(context?.params);
+  return (params?.id as string | undefined) ?? undefined;
+}
+
 export async function GET(req: NextRequest, context: any) {
-  const { params } = context;
-  const id = params?.id as string | undefined;
+  const id = await getPostId(context);
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const supabase = createServerClient();
@@ -25,8 +29,7 @@ export async function GET(req: NextRequest, context: any) {
 }
 
 export async function PUT(req: NextRequest, context: any) {
-  const { params } = context;
-  const id = params?.id as string | undefined;
+  const id = await getPostId(context);
   const body = await req.json();
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
   if (!body?.title || !body?.content) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -51,8 +54,7 @@ export async function PUT(req: NextRequest, context: any) {
 }
 
 export async function DELETE(req: NextRequest, context: any) {
-  const { params } = context;
-  const id = params?.id as string | undefined;
+  const id = await getPostId(context);
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const authHeader = req.headers.get("authorization") || "";
