@@ -45,11 +45,9 @@ export default async function PostsPage() {
       <div className="max-w-4xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">블로그</h1>
-          <Link href="/posts/new" className="">
-            <Button asChild>
-              <a>새 글 작성</a>
-            </Button>
-          </Link>
+          <Button asChild>
+            <Link href="/posts/new">새 글 작성</Link>
+          </Button>
         </div>
 
         {Boolean(error) && <div className="text-sm text-destructive">목록을 불러오는 중 오류가 발생했습니다. {String(error)}</div>}
@@ -72,11 +70,9 @@ export default async function PostsPage() {
                 </CardContent>
 
                 <CardAction>
-                  <Link href={`/posts/${post.id}`}>
-                    <Button size="sm" asChild>
-                      <a>보기</a>
-                    </Button>
-                  </Link>
+                  <Button size="sm" asChild>
+                    <Link href={`/posts/${post.id}`}>보기</Link>
+                  </Button>
                 </CardAction>
               </Card>
             ))}
