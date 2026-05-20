@@ -35,7 +35,19 @@ export default function SignupPage() {
       try {
         const userId = res?.data?.user?.id;
         if (userId) {
-          await supabase.from("profiles").upsert({ id: userId, username: name }).select();
+          const { data: sessionData } = await supabase.auth.getSession();
+          const session = (sessionData as any)?.session;
+          const token = session?.access_token;
+          if (token) {
+            await fetch("/api/profiles", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: userId, username: name }),
+            });
+          }
         }
       } catch (e) {
         // ignore — profile creation is best-effort here

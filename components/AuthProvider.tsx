@@ -30,7 +30,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (uid) {
         void (async () => {
           try {
-            await supabaseClient.from("profiles").upsert({ id: uid, username: data.session?.user?.email ?? undefined }).select();
+            const { data: s } = await supabaseClient.auth.getSession();
+            const token = (s as any)?.session?.access_token;
+            if (!token) return;
+            await fetch("/api/profiles", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: uid, username: data.session?.user?.email ?? undefined }),
+            });
           } catch (e) {
             // ignore
           }
@@ -45,7 +55,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (uid) {
         void (async () => {
           try {
-            await supabaseClient.from("profiles").upsert({ id: uid, username: newSession?.user?.email ?? undefined }).select();
+            const { data: s } = await supabaseClient.auth.getSession();
+            const token = (s as any)?.session?.access_token;
+            if (!token) return;
+            await fetch("/api/profiles", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: uid, username: newSession?.user?.email ?? undefined }),
+            });
           } catch (e) {
             // ignore
           }

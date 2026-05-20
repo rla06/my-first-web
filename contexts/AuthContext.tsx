@@ -37,7 +37,21 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (uid) {
         void (async () => {
           try {
-            await supabase.from("profiles").upsert({ id: uid, username: data.user?.email ?? undefined }).select();
+            // Call server API to create/upsert profile so client doesn't perform
+            // direct REST writes which may be blocked by RLS.
+            const { data: sessionData } = await supabase.auth.getSession();
+            const session = (sessionData as any)?.session;
+            const token = session?.access_token;
+            if (!token) return;
+
+            await fetch("/api/profiles", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: uid, username: data.user?.email ?? null }),
+            });
           } catch (e) {
             // ignore
           }
@@ -57,7 +71,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (uid) {
         void (async () => {
           try {
-            await supabase.from("profiles").upsert({ id: uid, username: session?.user?.email ?? undefined }).select();
+            const { data: s } = await supabase.auth.getSession();
+            const token = (s as any)?.session?.access_token;
+            if (!token) return;
+
+            await fetch("/api/profiles", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ id: uid, username: session?.user?.email ?? null }),
+            });
           } catch (e) {
             // ignore
           }
