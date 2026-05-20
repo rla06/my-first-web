@@ -71,9 +71,6 @@ export default async function PostPage({ params }: Props) {
       {/* UI: only show owner actions for the post's author. Actual authorization is enforced by RLS (Ch11). */}
       <PostOwnerActions authorId={data.user_id} postId={data.id} />
 
-      <div className="mt-4">
-        <Link href="/posts">목록으로 돌아가기</Link>
-      </div>
     </div>
   );
 }

@@ -62,14 +62,14 @@ export default async function PostsPage() {
               <Card key={post.id} className="hover:shadow-lg transition">
                 <CardHeader>
                   <CardTitle>{post.title}</CardTitle>
-                  <CardDescription>{post.user_id} · {post.created_at}</CardDescription>
+                  <CardDescription>{post.created_at}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
                   <p className="text-sm text-muted-foreground">{(post.content || "").slice(0, 120)}{(post.content || "").length>120?"...":""}</p>
                 </CardContent>
 
-                <CardAction>
+                <CardAction className="flex justify-end">
                   <Button size="sm" asChild>
                     <Link href={`/posts/${post.id}`}>보기</Link>
                   </Button>
