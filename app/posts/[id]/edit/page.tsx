@@ -1,8 +1,9 @@
 import SketchLayout from "@/components/SketchLayout";
 import EditPostForm from "@/components/EditPostForm";
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function EditPostPage({ params }: { params: { id: string } }) {
+  const resolvedParams = await Promise.resolve(params);
+  const id = resolvedParams?.id;
   return (
     <SketchLayout>
       <div>
