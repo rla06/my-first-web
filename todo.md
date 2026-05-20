@@ -40,6 +40,14 @@
 - [ ] `posts.user_id` 컬럼 존재 여부 확인 및 필요 시 마이그레이션 계획 수립(데이터 이전 고려)
 - [ ] RLS 적용 후 프론트엔드에서 보이는 분기(버튼/메뉴)는 UX용임을 문서화
 
+## Ch11 마무리 TODO
+
+- [x] posts RLS 마이그레이션 생성
+- [ ] `npx supabase db push`로 원격 적용
+- [ ] 다른 계정 우회 테스트(사용자 B가 A 글 수정/삭제 시도)
+- [ ] 보안 키 노출 grep(`service_role`, `sb_secret_`, `sbp_` 등)
+- [ ] 빌드/배포 검증(npm run build, 배포 확인)
+
 
 ## Ch9 과제 TODO
 

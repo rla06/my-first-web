@@ -15,6 +15,11 @@ Ch10 기준(중요)
 - 수정/삭제 UI는 프론트엔드 UX이며 실제 권한·정책 관리는 Ch11의 RLS로 처리합니다.
 - 절대 `SUPABASE_SERVICE_ROLE_KEY`를 클라이언트에 넣지 마세요.
 
+Ch11 RLS 보안 규칙
+- 보안은 클라이언트 if문이 아니라 RLS로 강제합니다.
+- RLS SQL은 Supabase CLI 마이그레이션으로 남깁니다.
+- `SUPABASE_SERVICE_ROLE_KEY`는 클라이언트에서 절대 사용하지 않습니다.
+
 환경변수
 - 로컬 개발: `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`를 설정합니다.
 

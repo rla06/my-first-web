@@ -127,6 +127,18 @@ create table comments (
 - `posts.user_id` 컬럼을 `auth.users(id)`와 연결해, RLS에서는 `auth.uid()`와 비교하여 행 수준 권한을 판정합니다.
 - 프론트엔드 분기는 UX 용도일 뿐이며, 실제 권한/보안은 RLS에 의해 강제됩니다.
 
+#### 보안 계층
+
+- UI 분기(UX): 버튼/메뉴 노출 제어는 사용자 경험을 위한 처리
+- DB 보안(RLS): 실제 권한 강제는 RLS 정책으로 처리
+
+#### 보호 정책 목록 (posts)
+
+- SELECT: 누구나 읽기
+- INSERT: 로그인 사용자 본인만(`user_id = auth.uid()`)
+- UPDATE: 작성자만(`user_id = auth.uid()`)
+- DELETE: 작성자만(`user_id = auth.uid()`)
+
 ## Version Policy
 
 - 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2

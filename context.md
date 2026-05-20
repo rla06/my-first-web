@@ -82,6 +82,22 @@
 - 클라이언트의 UI 분기는 UX 차원일 뿐이며 보안 결정은 RLS가 담당합니다. 클라이언트에서 권한을 보완하려 하지 마세요.
 - `SUPABASE_SERVICE_ROLE_KEY`(service_role)는 절대 클라이언트에 포함시키지 않습니다. 서버 전용 환경에서만 사용하세요.
 
+## Ch11 RLS 적용 상태 (posts)
+
+- RLS 활성화: 마이그레이션 파일 생성 완료(원격 적용 전)
+- 적용 정책:
+	- SELECT: 누구나 읽기
+	- INSERT: 로그인 사용자 본인만(user_id = auth.uid())
+	- UPDATE: 작성자만(user_id = auth.uid())
+	- DELETE: 작성자만(user_id = auth.uid())
+- 마이그레이션 파일: `supabase/migrations/20260520000100_add_posts_rls.sql`
+- 테스트 결과(현재 상태):
+	- 비로그인 조회: 미실행(예상: 허용)
+	- 비로그인 작성: 미실행(예상: 거부)
+	- 사용자 A 작성: 미실행(예상: 허용)
+	- 사용자 B가 A 글 수정: 미실행(예상: 거부)
+	- 사용자 B가 A 글 삭제: 미실행(예상: 거부)
+
 ## Ch10 시작 전 Readiness 체크리스트
 
 - `lib/supabase/client.ts` 또는 `lib/supabase.ts`가 실제로 존재하고, 프로젝트 내에서 임포트 되는지 확인
