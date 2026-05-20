@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest, context: any) {
   if (userErr || !userData?.user) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   const { data, error } = await supabase
     .from("posts")
-    .update({ title: body.title, content: body.content, updated_at: new Date() })
+    .update({ title: body.title, content: body.content })
     .eq("id", id)
     .select()
     .single();
