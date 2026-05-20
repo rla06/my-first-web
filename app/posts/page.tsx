@@ -7,7 +7,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardAction,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SketchLayout from "@/components/SketchLayout";
@@ -69,11 +68,11 @@ export default async function PostsPage() {
                   <p className="text-sm text-muted-foreground">{(post.content || "").slice(0, 120)}{(post.content || "").length>120?"...":""}</p>
                 </CardContent>
 
-                <CardAction className="flex justify-end">
+                <div className="px-4 pb-4 flex justify-end">
                   <Button size="sm" asChild>
                     <Link href={`/posts/${post.id}`}>보기</Link>
                   </Button>
-                </CardAction>
+                </div>
               </Card>
             ))}
           </div>
