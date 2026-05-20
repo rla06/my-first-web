@@ -82,7 +82,7 @@ create table profiles (
 ```sql
 create table posts (
   id uuid primary key default gen_random_uuid(),
-  author_id uuid references profiles(id) on delete set null,
+  user_id uuid references auth.users(id) on delete set null,
   title text not null,
   slug text unique not null,
   content text not null,
@@ -120,6 +120,12 @@ create table comments (
 - 클라이언트에서는 `next/router`와 `pages/` 라우터를 사용하지 말고 App Router(`next/navigation`)만 사용
 - 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 이름을 유지
 - 보안: `service_role` 키는 서버 전용(비공개)으로 유지 — 클라이언트에 절대 노출 금지
+
+### Ch11 RLS 요약
+
+- RLS 정책은 Supabase CLI 마이그레이션으로 적용합니다(콘솔 SQL 편집기는 권장하지 않음).
+- `posts.user_id` 컬럼을 `auth.users(id)`와 연결해, RLS에서는 `auth.uid()`와 비교하여 행 수준 권한을 판정합니다.
+- 프론트엔드 분기는 UX 용도일 뿐이며, 실제 권한/보안은 RLS에 의해 강제됩니다.
 
 ## Version Policy
 
