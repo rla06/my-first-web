@@ -34,6 +34,11 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
+      // Detect common RLS error and provide actionable hint
+      const msg = (error?.message || '').toString();
+      if (msg.includes('row-level security') || msg.includes('row level security')) {
+        return NextResponse.json({ error: 'Row-level security blocked the insert. This usually means the server is using the anon key instead of the SUPABASE_SERVICE_ROLE_KEY. Verify your server environment variable SUPABASE_SERVICE_ROLE_KEY is set to the service role key (not a NEXT_PUBLIC_ key) and redeploy.' }, { status: 500 });
+      }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     return NextResponse.json(data, { status: 201 });

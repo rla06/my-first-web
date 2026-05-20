@@ -1,3 +1,24 @@
+# Project Agent Rules
+
+기본 규칙 (Ch7 기준):
+
+- App Router만 사용합니다 (`app/` 디렉토리). `pages/` 또는 `next/router` 사용 금지.
+- Server Components를 기본으로 사용하며, 폼/로컬 상태/브라우저 API가 필요한 경우에만 `"use client"`를 추가합니다.
+- 디자인 토큰은 `app/globals.css`의 CSS 변수(`--primary`, `--background` 등)를 사용합니다.
+
+Supabase / 보안 규칙 (Ch11 보강):
+
+- RLS 정책은 Supabase CLI 마이그레이션으로 관리합니다. SQL Editor에서 직접 정책을 붙여넣지 않습니다.
+- `SUPABASE_SERVICE_ROLE_KEY`는 절대 클라이언트에 포함하지 않습니다. 서비스 역할 키는 서버/빌드 서버에서만 사용합니다.
+- posts 테이블의 작성자 식별자(`author_id` 또는 `user_id`)와 `auth.uid()`를 기준으로 RLS 정책을 작성합니다.
+- 클라이언트 UI 분기는 UX 목적일 뿐이며 실제 보안은 RLS로 보장되어야 합니다.
+
+문서화/버전 정책:
+
+- 교재 기준 버전: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
+- 프로젝트 `package.json`의 실제 버전을 항상 병기하여 차이를 문서화합니다.
+
+이 파일은 에이전트가 프로젝트 규칙을 결정하거나 문서/코드 변경을 제안할 때 우선 참조해야 합니다.
 # Project Rules (Agent) — my-first-web
 
 이 파일은 에이전트가 이 프로젝트에서 따라야 할 구체 규칙을 정리합니다.
