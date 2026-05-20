@@ -13,10 +13,11 @@ export default async function PostPage({ params }: Props) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const cookieStore = await cookies();
   const supabase = url && anonKey
     ? createServerClient(url, anonKey, {
         cookies: {
-          getAll: () => cookies().getAll(),
+          getAll: () => cookieStore.getAll(),
           setAll: () => {},
         },
       })
