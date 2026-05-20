@@ -46,6 +46,8 @@
 - `.github/copilot-instructions.md`가 존재하므로 에이전트는 우선 해당 파일을 준수하세요.
 - 실제 `package.json` 버전(예: @supabase/supabase-js 2.105.1 등)을 문서에 병기하여 교재 기준과 차이를 명확히 기록합니다.
 
+-- Ch11 RLS 지침: RLS는 Supabase CLI 마이그레이션으로 관리합니다. `posts`의 `user_id`와 `auth.uid()`를 기준으로 정책을 작성하고, `SUPABASE_SERVICE_ROLE_KEY`는 절대 클라이언트에 노출하지 마세요.
+
 
 **Ch9 Auth / Routing Rules**
 
