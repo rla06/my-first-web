@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import SketchLayout from "@/components/SketchLayout";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
@@ -9,7 +8,13 @@ type Props = { params: { id: string } };
 
 export default async function PostPage({ params }: Props) {
   const { id } = params;
-  if (!id) return notFound();
+  if (!id) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="text-sm text-muted-foreground">게시글 ID가 없습니다.</div>
+      </div>
+    );
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -71,3 +76,5 @@ export default async function PostPage({ params }: Props) {
     </div>
   );
 }
+
+export const dynamic = "force-dynamic";
