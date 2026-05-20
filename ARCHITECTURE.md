@@ -134,14 +134,6 @@ create table comments (
 - 수정/삭제 UI는 프론트엔드 UX로 남겨두고 실제 권한 관리는 Ch11에서 RLS로 처리합니다.
 - App Router만 사용하고 `next/router`/`pages/` 사용을 금지합니다.
 
-## Security: RLS (Ch11 기준)
-
-- RLS 적용 방식: 정책은 Supabase CLI 마이그레이션으로 관리합니다(`supabase/migrations/`). SQL Editor에 직접 붙여넣지 않습니다.
-- 정책 타깃(설계): `posts` 테이블의 `author_id`(또는 `user_id`)와 `auth.uid()`를 기준으로 작성자 권한을 제어합니다. 예: `UPDATE/DELETE`는 `author_id = auth.uid()`일 때만 허용.
-- 읽기 정책: 공개(`published = true`) 인 글은 누구나 읽기 가능, 작성자는 자신의 초안(draft)도 읽을 수 있도록 별도 예외 정책을 둡니다.
-- 클라이언트 분기는 UX 용도로만 사용하고, 실제 권한 검증은 RLS로 처리합니다.
-- 절대 금지: `SUPABASE_SERVICE_ROLE_KEY`를 클라이언트에 포함하지 마세요. 서비스 키는 서버 전용입니다.
-
 ## 실제 설치 버전(프로젝트 기준)
 - `package.json`에 기록된 현재 주요 패키지 버전(예시):
   - Next.js: 16.2.1

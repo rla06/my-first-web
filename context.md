@@ -75,6 +75,13 @@
 - 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
 - 수업 설명은 교재 기준을 따르되, 빌드/실행 문제는 실제 `package.json` 버전을 우선 확인하세요.
 
+## Ch11 RLS 기준
+
+- RLS는 Supabase 콘솔의 SQL Editor에서 직접 실시간으로 정책을 만드는 대신, Supabase CLI 마이그레이션으로 관리합니다. 마이그레이션 파일을 커밋해 배포 이력으로 남깁니다.
+- RLS 정책의 기준 열은 `posts` 테이블의 사용자 식별자입니다. 문서·코드에서는 `user_id` (또는 기존 `author_id`)가 `auth.users`의 `id`와 대응되도록 설계하고, 정책에서는 `auth.uid()`와 비교합니다.
+- 클라이언트의 UI 분기는 UX 차원일 뿐이며 보안 결정은 RLS가 담당합니다. 클라이언트에서 권한을 보완하려 하지 마세요.
+- `SUPABASE_SERVICE_ROLE_KEY`(service_role)는 절대 클라이언트에 포함시키지 않습니다. 서버 전용 환경에서만 사용하세요.
+
 ## Ch10 시작 전 Readiness 체크리스트
 
 - `lib/supabase/client.ts` 또는 `lib/supabase.ts`가 실제로 존재하고, 프로젝트 내에서 임포트 되는지 확인
@@ -88,21 +95,3 @@
 ## 현재 설치된 주요 패키지 버전(확인 필요)
 - 교재 기준: Next.js 16.2.1, @supabase/supabase-js 2.47.12, @supabase/ssr 0.5.2
 - 현재 설치(프로젝트 `package.json` 기준): Next.js 16.2.1, @supabase/supabase-js 2.105.1, @supabase/ssr 0.10.2
-
-## Ch11 RLS 기준 요약
-
-- RLS 적용 방식: SQL Editor에서 직접 실행하지 않고 Supabase CLI 마이그레이션으로 관리합니다. 마이그레이션 파일은 `supabase/migrations/`에 남깁니다.
-- 정책 기준: `posts` 테이블의 작성자 식별자를 `author_id`(또는 스키마에서 사용 중인 `user_id`)와 `auth.uid()`를 기준으로 정책을 작성합니다. 예: 작성자만 수정/삭제 가능하도록 하는 정책.
-- 클라이언트 분기는 UI/UX 목적일 뿐이며, 실제 보안은 RLS로 보장되어야 합니다. 프론트엔드에서 권한 분기만으로 보안을 대체하지 마세요.
-- 절대 금지: `SUPABASE_SERVICE_ROLE_KEY` 또는 서비스 역할 키를 클라이언트에 포함하지 마세요. 서버(또는 Edge 함수)에서만 사용해야 합니다.
-- SQL 생성 시점: 지금은 정책 SQL을 만들지 않고 대상(타깃)과 설계를 확정합니다. 실제 정책은 이후 마이그레이션 파일로 추가합니다.
-
-## 현재 권장 RLS 적용 대상 (설계 단계)
-
-- `posts` 테이블: 읽기(공개)와 쓰기(게시/수정/삭제)에 대해 다음 정책을 적용할 예정입니다.
-	- 게시(INSERT): 인증된 사용자만 허용 (auth.uid() 존재)
-	- 수정(UPDATE): `author_id = auth.uid()` 인 경우에만 허용
-	- 삭제(DELETE): `author_id = auth.uid()` 인 경우에만 허용
-	- 공개여부(PUBLISHED) 읽기: `published = true` 인 경우 누구나 읽기 가능, 작성자는 자신의 draft도 읽기 가능하도록 추가 정책 필요
-
-위 항목들은 설계 단계의 대상이며, 실제 SQL은 마이그레이션 파일로 작성합니다.
