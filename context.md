@@ -2,9 +2,9 @@
 
 ## 현재 상태
 
-- 마지막 작업일: 2026-04-29
+- 마지막 작업일: 2026-05-28
 - 완료된 작업: 홈 페이지, 헤더/푸터 레이아웃, 포스트 목록, DB 스키마 초안, Supabase 설정 문서
-- 진행 중: Supabase 프로젝트 생성 및 연동, 포스트 상세 페이지 (데이터 로딩 미완)
+- 진행 중: Supabase 프로젝트 생성 및 연동
 - 미착수: 마이페이지
 
 ## 기술 결정 사항
@@ -51,6 +51,9 @@
 - `app/api/posts/route.ts`: POST 엔드포인트를 Supabase로 통합(환경변수 없을 때는 스텁 유지)
 - `components/NewPostForm.tsx`: 클라이언트 작성 폼 추가
 - `app/posts/[id]/page.tsx`: Supabase에서 포스트 로드 시도 로직 추가
+- Ch12 UX: posts 목록/상세 로딩 및 에러 바운더리 적용 (`app/posts/loading.tsx`, `app/posts/error.tsx`, `app/posts/[id]/loading.tsx`, `app/posts/[id]/error.tsx`, `app/posts/[id]/not-found.tsx`)
+- Ch12 폼 검증: 새 글 작성 폼 제목/내용 최소 길이 및 필드별 에러 메시지 추가
+- 에러 메시지 변환 유틸: `lib/error-message.ts`
 
 ## 최근 작업 요약 (2026-04-29)
 
@@ -58,6 +61,18 @@
 - `copilot-instructions.md` 생성: 디자인 토큰과 컴포넌트 규칙 명시
 - `.env.local` 예시 생성: 로컬 개발용 Supabase 키 자리표시자 추가
 - 개발 서버 이슈 해결: 중복 실행 중인 Next dev 프로세스 종료 및 런타임 에러(supabaseUrl missing) 대응
+
+## 최근 작업 요약 (2026-05-28)
+
+- posts 라우트에 loading/error/not-found UI 추가
+- posts 목록/상세에서 오류는 에러 바운더리로 전환하고 콘솔 로깅 유지
+- 새 글 작성 폼 클라이언트 검증(제목 2자+, 내용 10자+) 및 필드별 에러 메시지 추가
+- 로그인/회원가입에서 Supabase/네트워크 에러 메시지 변환 적용
+
+## 최종 검증 보고서 상태 (2026-05-28)
+
+- Playwright: `npx playwright test` 실행됨. 다만 `playwright.config.ts`의 `testDir`가 `./y`로 설정되어 있어 실제 테스트 발견/실행 여부는 확인 필요.
+- Vercel: `vercel env ls` 실행됨. 배포 URL 수동 시나리오 검증과 환경변수 실제 값 확인은 확인 필요.
 
 ## 다음 단계
 - dev 서버 정상화 확인 및 브라우저에서 화면 검증
@@ -69,6 +84,14 @@
 - Tailwind CSS 4 기준에서는 `@import "tailwindcss"` + `@theme` 블록으로 설정 (`tailwind.config.js` 불필요)
 - Server Component에서 useRouter 사용 불가 → redirect() 사용
 - Supabase 연동 준비: 로컬 환경에 `.env.local` 또는 배포 환경의 환경변수로 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` 설정 필요
+
+## Ch12 에러 처리 및 UX 요약
+
+- loading 상태: `/posts`, `/posts/[id]`에 skeleton UI 적용
+- empty 상태: `/posts` 목록에서 게시글 0개 시 안내 문구
+- error 상태: posts 목록/상세는 error boundary에서 친절한 메시지 표시, 개발자 로그는 `console.error`
+- 폼 검증 규칙: 제목 필수(최소 2자), 내용 필수(최소 10자)
+- 에러 메시지 변환 규칙: `lib/error-message.ts`
 
 ## Version Policy
 

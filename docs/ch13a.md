@@ -144,6 +144,31 @@ context.md, todo.md도 함께 업데이트해줘.
 
 ---
 
+## 최종 검증 보고서 (2026-05-28)
+
+### 1. 테스트 환경 (local / Vercel)
+
+- Local: Windows, Node.js/npm 사용, Next.js dev/test 환경
+- Vercel: 프로젝트 존재 및 `vercel env ls` 실행됨 (환경변수 실제 값/연결은 확인 필요)
+
+### 2. Playwright 테스트 결과
+
+- `npx playwright test` 실행됨
+- Playwright 설정의 `testDir`가 `./y`로 되어 있어 실제로 테스트가 발견/실행되었는지 확인 필요
+- 결과 판정: 확인 필요
+
+### 3. 배포 URL 수동 검증 결과
+
+- 배포 URL 접속 및 시나리오(로그인/글작성/비로그인 보호 등) 수동 검증: 확인 필요
+
+### 4. 아직 확인 필요한 항목
+
+- Playwright 테스트 실제 실행 여부(테스트 탐색 경로/테스트 개수)
+- Vercel 배포 URL 수동 시나리오 검증 결과
+- Vercel 환경변수 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 실제 설정 확인
+
+---
+
 ## 흔한 AI 실수
 
 | 실수 | 해결 |

@@ -1,21 +1,14 @@
-import SketchLayout from "@/components/SketchLayout";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import Link from "next/link";
 import PostOwnerActions from "@/components/PostOwnerActions";
+import { notFound } from "next/navigation";
 
 type Props = { params: { id: string } };
 
 export default async function PostPage({ params }: Props) {
   const resolvedParams = await Promise.resolve(params);
   const id = resolvedParams?.id;
-  if (!id) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-sm text-muted-foreground">게시글 ID가 없습니다.</div>
-      </div>
-    );
-  }
+  if (!id) notFound();
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -29,35 +22,24 @@ export default async function PostPage({ params }: Props) {
       })
     : null;
 
-  // Load the post from Supabase by id
   if (!supabase) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-sm text-destructive">Supabase 환경변수가 설정되지 않았습니다.</div>
-      </div>
-    );
+    console.error("Supabase not configured");
+    throw new Error("게시글을 불러오는 중 문제가 발생했습니다.");
   }
 
-  const { data, error } = await supabase
-    .from("posts")
-    .select("id, title, content, created_at, user_id")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-sm text-destructive">게시글을 불러오는 중 오류가 발생했습니다: {error.message}</div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-sm text-muted-foreground">게시글을 찾을 수 없습니다. ID: {id}</div>
-      </div>
-    );
+  let data: { id: string; title: string; content: string; created_at: string; user_id: string } | null = null;
+  try {
+    const { data: post, error } = await supabase
+      .from("posts")
+      .select("id, title, content, created_at, user_id")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw error;
+    if (!post) return notFound();
+    data = post;
+  } catch (e) {
+    console.error("Failed to load post", e);
+    throw new Error("게시글을 불러오는 중 문제가 발생했습니다.");
   }
 
   return (

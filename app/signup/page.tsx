@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signUpWithEmail } from "@/lib/auth";
 import supabase from "@/lib/supabase/client";
+import getErrorMessage from "@/lib/error-message";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -25,7 +26,8 @@ export default function SignupPage() {
       const res: any = await signUpWithEmail(email, password, name);
       const err = res?.error;
       if (err) {
-        setError(err.message || String(err));
+        console.error("Signup failed", err);
+        setError(getErrorMessage(err));
         setLoading(false);
         return;
       }
@@ -57,7 +59,8 @@ export default function SignupPage() {
       setMessage("가입 완료. 로그인하세요.");
       router.push("/login");
     } catch (err: any) {
-      setError(err?.message || String(err));
+      console.error("Signup failed", err);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

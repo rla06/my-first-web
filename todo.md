@@ -48,6 +48,12 @@
 - [ ] 보안 키 노출 grep(`service_role`, `sb_secret_`, `sbp_` 등)
 - [ ] 빌드/배포 검증(npm run build, 배포 확인)
 
+## Ch13 검증 TODO
+
+- [ ] Playwright 테스트 실제 실행 확인(테스트 디렉터리/실행 로그)
+- [ ] Vercel 배포 URL 수동 시나리오 검증 기록
+- [ ] Vercel 환경변수 실제 값 확인(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
+
 
 ## Ch9 과제 TODO
 
@@ -63,5 +69,6 @@
 
 - [ ] 마이페이지
 - [ ] 댓글 기능
+- [x] Ch12 에러 처리 및 UX 개선(loading/empty/error, 폼 검증, 에러 메시지 변환)
 
 ## 진행률: 7/12 (58%)

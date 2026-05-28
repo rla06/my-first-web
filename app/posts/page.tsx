@@ -12,8 +12,7 @@ import { Button } from "@/components/ui/button";
 import SketchLayout from "@/components/SketchLayout";
 
 export default async function PostsPage() {
-  let data: any[] | null = null;
-  let error: any = null;
+  let posts: any[] = [];
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -29,14 +28,15 @@ export default async function PostsPage() {
 
   try {
     if (!supabase) throw new Error("Supabase not configured");
-    const res = await supabase
+    const { data, error } = await supabase
       .from("posts")
       .select("id, title, content, created_at, user_id")
       .order("created_at", { ascending: false });
-    data = res.data;
-    error = res.error;
+    if (error) throw error;
+    posts = data ?? [];
   } catch (e) {
-    error = e;
+    console.error("Failed to load posts list", e);
+    throw new Error("게시글 목록을 불러오는 중 문제가 발생했습니다.");
   }
 
   return (
@@ -49,15 +49,13 @@ export default async function PostsPage() {
           </Button>
         </div>
 
-        {Boolean(error) && <div className="text-sm text-destructive">목록을 불러오는 중 오류가 발생했습니다. {String(error)}</div>}
+        {posts.length === 0 && (
+          <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>
+        )}
 
-        {!Boolean(error) && data && data.length === 0 && <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>}
-
-        {!Boolean(error) && !data && <div className="text-sm text-muted-foreground">로딩...</div>}
-
-        {!Boolean(error) && data && (
+        {posts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.map((post: any) => (
+            {posts.map((post: any) => (
               <Card key={post.id} className="hover:shadow-lg transition">
                 <CardHeader>
                   <CardTitle>{post.title}</CardTitle>

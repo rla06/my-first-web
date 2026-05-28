@@ -36,7 +36,8 @@ export default async function HomePage() {
     if (error) throw error;
     posts = (data ?? []) as HomePost[];
   } catch (e: any) {
-    loadError = e?.message ?? "최근 글을 불러오는 중 오류가 발생했습니다.";
+    console.error("Failed to load home posts", e);
+    loadError = "최근 글을 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.";
   }
 
   return (

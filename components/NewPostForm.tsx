@@ -13,7 +13,9 @@ export default function NewPostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [contentError, setContentError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -23,27 +25,38 @@ export default function NewPostForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setFormError(null);
+    setTitleError(null);
+    setContentError(null);
     if (!user) {
-      setError("로그인이 필요합니다.");
+      setFormError("로그인이 필요합니다.");
       return;
     }
-    if (!title.trim() || !content.trim()) {
-      setError("제목과 내용을 입력하세요.");
-      return;
+    const nextTitle = title.trim();
+    const nextContent = content.trim();
+    let hasError = false;
+    if (nextTitle.length < 2) {
+      setTitleError("제목은 2자 이상 입력해 주세요.");
+      hasError = true;
     }
+    if (nextContent.length < 10) {
+      setContentError("내용은 10자 이상 입력해 주세요.");
+      hasError = true;
+    }
+    if (hasError) return;
 
     setSaving(true);
     try {
       // 1. Supabase client insert with RLS (requires user_id)
       const { data, error: insertError } = await supabase
         .from("posts")
-        .insert([{ title: title.trim(), content: content.trim(), user_id: user.id }])
+        .insert([{ title: nextTitle, content: nextContent, user_id: user.id }])
         .select()
         .single();
 
       if (insertError) {
-        throw new Error(insertError.message);
+        console.error("Failed to create post", insertError);
+        throw new Error("게시글을 저장할 수 없습니다. 잠시 후 다시 시도해 주세요.");
       }
 
       if (!data?.id) {
@@ -53,7 +66,8 @@ export default function NewPostForm() {
       // 성공하면 새 글 상세로 이동
       router.push(`/posts/${data.id}`);
     } catch (err: any) {
-      setError(err?.message ?? "게시 중 오류가 발생했습니다.");
+      console.error("Failed to create post", err);
+      setFormError("게시글 저장 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       setSaving(false);
     }
   }
@@ -63,6 +77,7 @@ export default function NewPostForm() {
       <div>
         <label className="block text-sm font-medium text-muted-foreground">제목</label>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="제목을 입력하세요" />
+        {titleError && <div className="text-xs text-destructive mt-1">{titleError}</div>}
       </div>
 
       <div>
@@ -74,9 +89,10 @@ export default function NewPostForm() {
           rows={10}
           placeholder="내용을 입력하세요"
         />
+        {contentError && <div className="text-xs text-destructive mt-1">{contentError}</div>}
       </div>
 
-      {error && <div className="text-sm text-destructive">{error}</div>}
+      {formError && <div className="text-sm text-destructive">{formError}</div>}
 
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>

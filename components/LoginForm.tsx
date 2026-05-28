@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signInWithEmail } from "@/lib/auth";
+import getErrorMessage from "@/lib/error-message";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -21,7 +22,8 @@ export default function LoginForm() {
       const res: any = await signInWithEmail(email, password);
       const err = res?.error;
       if (err) {
-        setError(err.message || String(err));
+        console.error("Login failed", err);
+        setError(getErrorMessage(err));
         setLoading(false);
         return;
       }
@@ -29,7 +31,8 @@ export default function LoginForm() {
       // 로그인 성공 시 /posts 로 이동
       router.push("/posts");
     } catch (err: any) {
-      setError(err?.message || String(err));
+      console.error("Login failed", err);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

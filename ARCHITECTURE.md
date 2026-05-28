@@ -58,6 +58,11 @@
 - `components/ui/*` — shadcn/ui에서 가져온 재사용 컴포넌트 (Button, Card, Input, Dialog 등)
 - `app/posts/page.tsx` — 포스트 리스트(서버 컴포넌트, Card 사용)
 - `app/posts/[id]/page.tsx` — 포스트 상세(서버 컴포넌트, 서버에서 데이터 로드)
+- `app/posts/loading.tsx` — 포스트 목록 loading UI
+- `app/posts/error.tsx` — 포스트 목록 error boundary
+- `app/posts/[id]/loading.tsx` — 포스트 상세 loading UI
+- `app/posts/[id]/error.tsx` — 포스트 상세 error boundary
+- `app/posts/[id]/not-found.tsx` — 포스트 상세 not-found UI
 
 컴포넌트 사용 가이드:
 - 리스트/카드는 `Card`로 감싸고 `CardTitle`, `CardDescription`으로 내용 구성
@@ -110,6 +115,27 @@ create table comments (
 
 - 컴포넌트 세부 계층(예: CardHeader, CardFooter) — TODO: 추가 예정
 - 상세 DB 필드(태그 테이블, 좋아요 테이블) — TODO: 추가 예정
+
+## 7. 에러/로딩 UX (Ch12)
+
+- loading: `/posts`, `/posts/[id]`는 route-level loading UI로 스켈레톤 표시
+- empty: `/posts`에서 게시글 0개 시 안내 문구
+- error: posts 목록/상세는 error boundary에서 친절한 메시지 표시, 원문은 `console.error`
+- not-found: `/posts/[id]`는 `notFound()`와 `not-found.tsx` 사용
+
+### 에러 메시지 변환 규칙
+
+- 유틸 위치: `lib/error-message.ts`
+- 42501 또는 row-level security -> "이 작업을 수행할 권한이 없습니다."
+- Failed to fetch -> "인터넷 연결을 확인해주세요."
+- not found 계열 -> "요청한 게시글을 찾을 수 없습니다."
+- 기본값 -> "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+
+### 폼 검증 규칙 (글 작성)
+
+- 제목: 필수, 최소 2자
+- 내용: 필수, 최소 10자
+- 제출 중 버튼 비활성화로 중복 제출 방지
 
 ## Authentication & Routing (Ch9 기준)
 
