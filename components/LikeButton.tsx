@@ -92,8 +92,14 @@ export default function LikeButton({ postId, initialCount, size = "default" }: P
 
   return (
     <div className="flex items-center gap-3">
-      <Button size={size} variant={liked ? "secondary" : "outline"} onClick={handleToggle} disabled={loading}>
-        {liked ? "좋아요 취소" : "좋아요"}
+      <Button
+        size={size}
+        variant="ghost"
+        onClick={handleToggle}
+        disabled={loading}
+        className={liked ? "text-red-500" : "text-muted-foreground"}
+      >
+        {"\u2665"}
       </Button>
       <span className="text-sm text-muted-foreground">총 {count}개</span>
     </div>
