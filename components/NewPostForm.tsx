@@ -16,6 +16,11 @@ export default function NewPostForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const imageLimitBytes = 5 * 1024 * 1024;
+  const mediaLimitBytes = 10 * 1024 * 1024;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,8 +44,8 @@ export default function NewPostForm() {
       setTitleError("제목은 2자 이상 입력해 주세요.");
       hasError = true;
     }
-    if (nextContent.length < 10) {
-      setContentError("내용은 10자 이상 입력해 주세요.");
+    if (!nextContent) {
+      setContentError("내용을 입력해 주세요.");
       hasError = true;
     }
     if (hasError) return;
@@ -72,6 +77,63 @@ export default function NewPostForm() {
     }
   }
 
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploadError(null);
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+    const isAudio = file.type.startsWith("audio/");
+
+    if (!isImage && !isVideo && !isAudio) {
+      setUploadError("이미지/영상/음성 파일만 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    if (isImage && file.size > imageLimitBytes) {
+      setUploadError("이미지는 최대 5MB까지 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    if ((isVideo || isAudio) && file.size > mediaLimitBytes) {
+      setUploadError("영상/음성은 최대 10MB까지 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploading(true);
+    const extension = file.name.split(".").pop() || "bin";
+    const filePath = `${user.id}/${Date.now()}-${Math.random().toString(16).slice(2)}.${extension}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("post-media")
+      .upload(filePath, file, { contentType: file.type });
+
+    if (uploadError) {
+      setUploadError("업로드에 실패했습니다. 스토리지 버킷을 확인해주세요.");
+      setUploading(false);
+      event.target.value = "";
+      return;
+    }
+
+    const { data: publicUrl } = supabase.storage.from("post-media").getPublicUrl(filePath);
+    const url = publicUrl.publicUrl;
+
+    if (isImage) {
+      setContent((prev) => `${prev}\n\n<img src="${url}" alt="첨부 이미지" />\n`);
+    } else if (isVideo) {
+      setContent((prev) => `${prev}\n\n<video controls src="${url}"></video>\n`);
+    } else {
+      setContent((prev) => `${prev}\n\n<audio controls src="${url}"></audio>\n`);
+    }
+
+    setUploading(false);
+    event.target.value = "";
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
@@ -82,6 +144,18 @@ export default function NewPostForm() {
 
       <div>
         <label className="block text-sm font-medium text-muted-foreground">본문</label>
+        <div className="mt-2 space-y-2">
+          <Input
+            type="file"
+            accept="image/*,video/*,audio/*"
+            disabled={uploading}
+            onChange={handleFileChange}
+          />
+          <p className="text-xs text-muted-foreground">
+            이미지 최대 5MB, 영상/음성 최대 10MB까지 업로드 가능합니다.
+          </p>
+          {uploadError && <div className="text-xs text-destructive">{uploadError}</div>}
+        </div>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

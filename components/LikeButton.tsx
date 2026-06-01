@@ -97,7 +97,7 @@ export default function LikeButton({ postId, initialCount, size = "default" }: P
         variant="ghost"
         onClick={handleToggle}
         disabled={loading}
-        className={liked ? "text-red-500" : "text-muted-foreground"}
+        className={`${liked ? "text-red-500" : "text-muted-foreground"} text-xl`}
       >
         {"\u2665"}
       </Button>

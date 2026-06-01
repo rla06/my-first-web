@@ -2,13 +2,35 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const router = useRouter();
   const { user, loading, signOut } = useAuth();
   const [busy, setBusy] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("theme");
+    if (saved === "dark" || saved === "light") {
+      setTheme(saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
+      return;
+    }
+
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const next = prefersDark ? "dark" : "light";
+    setTheme(next);
+    document.documentElement.classList.toggle("dark", prefersDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.classList.toggle("dark", next === "dark");
+    window.localStorage.setItem("theme", next);
+  };
 
   async function handleSignOut() {
     setBusy(true);
@@ -29,6 +51,15 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <Link href="/" className="text-sm text-muted-foreground hover:underline">홈</Link>
           <Link href="/posts" className="text-sm text-muted-foreground hover:underline">글 목록</Link>
+          {user && (
+            <Link href="/mypage" className="text-sm text-muted-foreground hover:underline">마이페이지</Link>
+          )}
+          <button
+            onClick={toggleTheme}
+            className="text-sm px-3 py-1 rounded border border-border text-muted-foreground hover:opacity-90"
+          >
+            {theme === "dark" ? "라이트" : "다크"}
+          </button>
 
           {user ? (
             <>

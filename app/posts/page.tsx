@@ -37,9 +37,7 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
 
   try {
     if (!supabase) throw new Error("Supabase not configured");
-    const selectFields = searchQuery
-      ? "id, title, content, created_at, user_id, view_count, profiles!inner(username), comments(count), post_likes(count)"
-      : "id, title, content, created_at, user_id, view_count, profiles(username), comments(count), post_likes(count)";
+    const selectFields = "id, title, content, created_at, user_id, view_count, profiles(username), comments(count), post_likes(count)";
 
     let query = supabase
       .from("posts")
@@ -47,7 +45,7 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
 
     if (searchQuery) {
       const like = `%${searchQuery}%`;
-      query = query.or(`title.ilike.${like},content.ilike.${like},profiles.username.ilike.${like}`);
+      query = query.or(`title.ilike.${like},content.ilike.${like}`);
     }
 
     if (sort === "views") {
