@@ -40,8 +40,8 @@ export default function NewPostForm() {
     const nextTitle = title.trim();
     const nextContent = content.trim();
     let hasError = false;
-    if (nextTitle.length < 2) {
-      setTitleError("제목은 2자 이상 입력해 주세요.");
+    if (!nextTitle) {
+      setTitleError("제목을 입력해 주세요.");
       hasError = true;
     }
     if (!nextContent) {
