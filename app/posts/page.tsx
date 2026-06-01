@@ -20,8 +20,10 @@ type SearchParams = {
 
 export default async function PostsPage({ searchParams }: { searchParams?: SearchParams }) {
   let posts: any[] = [];
-  const searchQuery = typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
+  const rawQuery = typeof searchParams?.q === "string" ? searchParams.q : "";
+  const searchQuery = rawQuery.trim();
   const sort = searchParams?.sort === "views" ? "views" : "latest";
+  const hasQuery = searchQuery.length > 0;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -43,7 +45,7 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
       .from("posts")
       .select(selectFields);
 
-    if (searchQuery) {
+    if (hasQuery) {
       const like = `%${searchQuery}%`;
       query = query.or(`title.ilike.${like},content.ilike.${like}`);
     }
@@ -72,7 +74,7 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
           </Button>
         </div>
 
-        <form className="flex flex-col gap-3 md:flex-row md:items-center mb-6" method="get">
+        <form className="flex flex-col gap-3 md:flex-row md:items-center mb-6" method="get" action="/posts">
           <div className="flex-1">
             <Input
               name="q"
@@ -94,7 +96,9 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
         </form>
 
         {posts.length === 0 && (
-          <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>
+          <div className="text-sm text-muted-foreground">
+            {hasQuery ? "검색 결과가 없습니다." : "게시물이 없습니다."}
+          </div>
         )}
 
         {posts.length > 0 && (
