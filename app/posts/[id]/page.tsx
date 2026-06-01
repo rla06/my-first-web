@@ -38,7 +38,7 @@ export default async function PostPage({ params }: Props) {
     view_count: number | null;
     post_likes?: { count: number }[];
     comments?: { count: number }[];
-    profiles?: { username: string | null } | null;
+    profiles?: { username: string | null } | { username: string | null }[] | null;
   } | null = null;
   let comments: any[] = [];
 
@@ -75,7 +75,8 @@ export default async function PostPage({ params }: Props) {
   const likeCount = data.post_likes?.[0]?.count ?? 0;
   const commentCount = data.comments?.[0]?.count ?? 0;
   const viewCount = data.view_count ?? 0;
-  const authorName = data.profiles?.username || "익명";
+  const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
+  const authorName = profile?.username || "익명";
 
   return (
     <div className="max-w-4xl mx-auto p-6">
