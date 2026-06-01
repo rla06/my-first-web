@@ -35,13 +35,28 @@ export default function ProfileEditor({ userId, email, initialProfile }: Profile
     setSaving(true);
     
     try {
-      const { error: updateError } = await supabase
+      let { error: updateError } = await supabase
         .from("profiles")
         .update({
           username: username.trim() || null,
           bio: bio.trim() || null,
         })
         .eq("id", userId);
+
+      if (updateError && (updateError.code === "42703" || updateError.message?.includes("bio"))) {
+        console.warn("Bio column missing. Falling back to username only.");
+        const { error: fallbackError } = await supabase
+          .from("profiles")
+          .update({
+            username: username.trim() || null,
+          })
+          .eq("id", userId);
+        
+        updateError = fallbackError;
+        if (!updateError) {
+          alert("주의: 데이터베이스에 'bio' 컬럼이 생성되지 않아 자기소개는 저장되지 않았습니다. 마이그레이션을 확인하세요.");
+        }
+      }
 
       if (updateError) {
         throw updateError;
