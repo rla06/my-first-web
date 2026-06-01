@@ -18,11 +18,12 @@ type SearchParams = {
   sort?: string;
 };
 
-export default async function PostsPage({ searchParams }: { searchParams?: SearchParams }) {
+export default async function PostsPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   let posts: any[] = [];
-  const rawQuery = typeof searchParams?.q === "string" ? searchParams.q : "";
+  const resolvedParams = searchParams ? await searchParams : {};
+  const rawQuery = typeof resolvedParams.q === "string" ? resolvedParams.q : "";
   const searchQuery = rawQuery.trim();
-  const sort = searchParams?.sort === "views" ? "views" : "latest";
+  const sort = resolvedParams.sort === "views" ? "views" : "latest";
   const hasQuery = searchQuery.length > 0;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
