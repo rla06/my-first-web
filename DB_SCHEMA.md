@@ -24,6 +24,7 @@ create table if not exists posts (
   user_id uuid references profiles(id) on delete cascade not null,
   title text not null,
   content text not null,
+  view_count bigint not null default 0,
   created_at timestamptz default now()
 );
 
@@ -36,9 +37,19 @@ create index if not exists idx_posts_user on posts(user_id);
 ```sql
 create table if not exists comments (
   id uuid primary key default gen_random_uuid(),
-  post_id uuid references posts(id) on delete cascade,
+  post_id uuid references posts(id) on delete cascade not null,
+  parent_id uuid references comments(id) on delete cascade,
   author_id uuid references profiles(id) on delete set null,
+  author_name text,
   content text not null,
+  created_at timestamptz default now()
+);
+
+create table if not exists post_likes (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid references posts(id) on delete cascade not null,
+  user_id uuid references profiles(id) on delete set null,
+  anon_id text,
   created_at timestamptz default now()
 );
 

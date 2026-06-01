@@ -9,10 +9,18 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import SketchLayout from "@/components/SketchLayout";
 
-export default async function PostsPage() {
+type SearchParams = {
+  q?: string;
+  sort?: string;
+};
+
+export default async function PostsPage({ searchParams }: { searchParams?: SearchParams }) {
   let posts: any[] = [];
+  const searchQuery = typeof searchParams?.q === "string" ? searchParams.q.trim() : "";
+  const sort = searchParams?.sort === "views" ? "views" : "latest";
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -28,10 +36,26 @@ export default async function PostsPage() {
 
   try {
     if (!supabase) throw new Error("Supabase not configured");
-    const { data, error } = await supabase
+    const selectFields = searchQuery
+      ? "id, title, content, created_at, user_id, view_count, profiles!inner(username), comments(count), post_likes(count)"
+      : "id, title, content, created_at, user_id, view_count, profiles(username), comments(count), post_likes(count)";
+
+    let query = supabase
       .from("posts")
-      .select("id, title, content, created_at, user_id")
-      .order("created_at", { ascending: false });
+      .select(selectFields);
+
+    if (searchQuery) {
+      const like = `%${searchQuery}%`;
+      query = query.or(`title.ilike.${like},content.ilike.${like},profiles.username.ilike.${like}`);
+    }
+
+    if (sort === "views") {
+      query = query.order("view_count", { ascending: false }).order("created_at", { ascending: false });
+    } else {
+      query = query.order("created_at", { ascending: false });
+    }
+
+    const { data, error } = await query;
     if (error) throw error;
     posts = data ?? [];
   } catch (e) {
@@ -49,6 +73,27 @@ export default async function PostsPage() {
           </Button>
         </div>
 
+        <form className="flex flex-col gap-3 md:flex-row md:items-center mb-6" method="get">
+          <div className="flex-1">
+            <Input
+              name="q"
+              placeholder="게시글 검색 (제목/내용/작성자)"
+              defaultValue={searchQuery}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <select
+              name="sort"
+              defaultValue={sort}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="latest">최신순</option>
+              <option value="views">조회수순</option>
+            </select>
+            <Button type="submit">검색</Button>
+          </div>
+        </form>
+
         {posts.length === 0 && (
           <div className="text-sm text-muted-foreground">게시물이 없습니다.</div>
         )}
@@ -59,11 +104,20 @@ export default async function PostsPage() {
               <Card key={post.id} className="hover:shadow-lg transition">
                 <CardHeader>
                   <CardTitle>{post.title}</CardTitle>
-                  <CardDescription>{post.created_at}</CardDescription>
+                  <CardDescription>
+                    {(post.profiles?.username || "익명")} · {new Date(post.created_at).toLocaleDateString()}
+                  </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{(post.content || "").slice(0, 120)}{(post.content || "").length>120?"...":""}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {(post.content || "").slice(0, 120)}{(post.content || "").length > 120 ? "..." : ""}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    <span>조회 {post.view_count ?? 0}</span>
+                    <span>좋아요 {post.post_likes?.[0]?.count ?? 0}</span>
+                    <span>댓글 {post.comments?.[0]?.count ?? 0}</span>
+                  </div>
                 </CardContent>
 
                 <div className="px-4 pb-4 flex justify-end">
