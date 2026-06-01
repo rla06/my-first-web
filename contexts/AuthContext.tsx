@@ -39,7 +39,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           try {
             await supabase
               .from('profiles')
-              .upsert({ id: uid, username: data.user?.email ?? null }, { onConflict: 'id' });
+              .upsert({ id: uid, username: data.user?.email ?? null }, { onConflict: 'id', ignoreDuplicates: true });
           } catch (e) {
             // ignore
           }
@@ -61,7 +61,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           try {
             await supabase
               .from('profiles')
-              .upsert({ id: uid, username: session?.user?.email ?? null }, { onConflict: 'id' });
+              .upsert({ id: uid, username: session?.user?.email ?? null }, { onConflict: 'id', ignoreDuplicates: true });
           } catch (e) {
             // ignore
           }
