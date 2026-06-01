@@ -137,3 +137,5 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
     </SketchLayout>
   );
 }
+
+export const dynamic = "force-dynamic";
