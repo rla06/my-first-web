@@ -90,6 +90,9 @@ export default async function PostPage({ params }: Props) {
         <div className="mb-6" dangerouslySetInnerHTML={{ __html: data.content }} />
       </article>
 
+      {/* UI: only show owner actions for the post's author. Actual authorization is enforced by RLS (Ch11). */}
+      <PostOwnerActions authorId={data.user_id} postId={data.id} />
+
       <div className="mt-4">
         <LikeButton postId={data.id} initialCount={likeCount} />
       </div>
@@ -97,9 +100,6 @@ export default async function PostPage({ params }: Props) {
       <div className="mt-8">
         <CommentsThread postId={data.id} initialComments={comments} initialCount={commentCount} />
       </div>
-
-      {/* UI: only show owner actions for the post's author. Actual authorization is enforced by RLS (Ch11). */}
-      <PostOwnerActions authorId={data.user_id} postId={data.id} />
 
     </div>
   );

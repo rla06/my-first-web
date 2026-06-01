@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SketchLayout from "@/components/SketchLayout";
+import LikeButton from "@/components/LikeButton";
 
 type SearchParams = {
   q?: string;
@@ -120,7 +121,8 @@ export default async function PostsPage({ searchParams }: { searchParams?: Searc
                   </div>
                 </CardContent>
 
-                <div className="px-4 pb-4 flex justify-end">
+                <div className="px-4 pb-4 flex items-center justify-between">
+                  <LikeButton postId={post.id} initialCount={post.post_likes?.[0]?.count ?? 0} size="sm" />
                   <Button size="sm" asChild>
                     <Link href={`/posts/${post.id}`}>보기</Link>
                   </Button>

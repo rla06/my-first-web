@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 type Props = {
   postId: string;
   initialCount: number;
+  size?: "sm" | "default";
 };
 
 function getOrCreateAnonId(): string {
@@ -23,7 +24,7 @@ function getOrCreateAnonId(): string {
   return generated;
 }
 
-export default function LikeButton({ postId, initialCount }: Props) {
+export default function LikeButton({ postId, initialCount, size = "default" }: Props) {
   const { user } = useAuth();
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(initialCount);
@@ -91,7 +92,7 @@ export default function LikeButton({ postId, initialCount }: Props) {
 
   return (
     <div className="flex items-center gap-3">
-      <Button variant={liked ? "secondary" : "outline"} onClick={handleToggle} disabled={loading}>
+      <Button size={size} variant={liked ? "secondary" : "outline"} onClick={handleToggle} disabled={loading}>
         {liked ? "좋아요 취소" : "좋아요"}
       </Button>
       <span className="text-sm text-muted-foreground">총 {count}개</span>
